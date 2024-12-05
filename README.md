@@ -17,11 +17,6 @@ conda activate reports-env-2024
 Install packages:
 
 ```sh
-#pip install requests
-#pip install plotly
-#pip install python-dotenv
-
-# best practice to list the packages in the requirements.txt file:
 pip install -r requirements.txt
 ```
 
