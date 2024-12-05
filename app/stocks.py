@@ -1,45 +1,34 @@
-
-# this is the "app/stocks.py" file...
-
-# IMPORTS
+# LOCAL DEV (ENV VARS)
 
 from pandas import read_csv
 from plotly.express import line
 
+
 from app.alpha import API_KEY
 
-# FUNCTIONS
+def fetch_stocks_csv(symbol):
+    request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={symbol}&apikey={API_KEY}&outputsize=full&datatype=csv"
+    df = read_csv(request_url)
+    return df
 
 def format_usd(my_price):
     return f"${float(my_price):,.2f}"
 
-
-def fetch_stocks_csv(symbol="MSFT"):
-    request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={symbol}&apikey={API_KEY}&outputsize=full&datatype=csv"
-    return read_csv(request_url)
-
-
-# the weird main conditional says
-# only run the indented code if you are running this file
-# from the command line
-# otherwise if importing from this file, ignore the stuff below
-
 if __name__ == "__main__":
 
-    # only if running from command line will this get reached
+    # SELECT A SYMBOL
 
-    # STOCK SELECTION
-
-    symbol = input("Please input a symbol (e.g. 'NFLX'): ")
+    symbol = input("Please input a symbol (e.g. 'NFLX'): ") or "NFLX"
     print("SYMBOL:", symbol)
 
-    # REPORT
+    # FETCH THE DATA
 
     df = fetch_stocks_csv(symbol)
 
     print(df.columns)
     print(len(df))
-    df.head()
+    print(df.head())
+
 
     # Challenge A
     #
@@ -50,8 +39,7 @@ if __name__ == "__main__":
     print("LATEST CLOSING PRICE:")
     first_row = df.iloc[0]
     #print(first_row)
-    print(f"${first_row['adjusted_close']}", "as of", first_row["timestamp"])
-
+    print(f"{format_usd(first_row['adjusted_close'])} as of {first_row['timestamp']}")
 
     # Challenge B
     #
@@ -63,13 +51,14 @@ if __name__ == "__main__":
 
     print("-------------------------")
     print("RECENT STATS...")
-    print(f"MEAN PRICE: ${recent_df['adjusted_close'].mean()}")
-    print(f"MEDIAN PRICE: ${recent_df['adjusted_close'].median()}")
-    print(f"MIN PRICE: ${recent_df['adjusted_close'].min()}")
-    print(f"MAX PRICE: ${recent_df['adjusted_close'].max()}")
+    print(f"MEAN PRICE: {format_usd(recent_df['adjusted_close'].mean())}")
+    print(f"MEDIAN PRICE: {format_usd(recent_df['adjusted_close'].median())}")
+    print(f"MIN PRICE: {format_usd(recent_df['adjusted_close'].min())}")
+    print(f"MAX PRICE: {format_usd(recent_df['adjusted_close'].max())}")
     # quantiles, for fun :-)
-    print(f"75TH PERCENTILE: ${recent_df['adjusted_close'].quantile(.75).round(2)}")
-    print(f"25TH PERCENTILE: ${recent_df['adjusted_close'].quantile(.25).round(2)}")
+    print(f"75TH PERCENTILE: {format_usd(recent_df['adjusted_close'].quantile(.75).round(2))}")
+    print(f"25TH PERCENTILE: {format_usd(recent_df['adjusted_close'].quantile(.25).round(2))}")
+
 
     # Challenge C
     #
@@ -80,3 +69,11 @@ if __name__ == "__main__":
                 title=f"Stock Prices ({symbol})",
             labels= {"x": "Date", "y": "Stock Price ($)"})
     fig.show()
+
+    #Email
+    send_email(
+        sender_address="sjolly03@gmail.com",
+        recipient_address="sjolly03@gmail.com",
+        subject=f"Stock Report Update for {symbol}",
+        html_content=f"<p>Average Price over the last 100 days: {format_usd(recent_df['adjusted_close'].mean())}</p>"
+    )
