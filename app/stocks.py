@@ -1,18 +1,13 @@
-# LOCAL DEV (ENV VARS)
+# ENV VARS
 
-import os
-from dotenv import load_dotenv
+from app.alpha import API_KEY
 
-load_dotenv() # looks in the ".env" file for env vars
+# STOCK SELECTION
 
-API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", default="demo")
-
-# SELECT A SYMBOL
-
-symbol = input("Please input a symbol (e.g. 'NFLX'): ") or "NFLX"
+symbol = input("Please input a symbol (e.g. 'NFLX'): ")
 print("SYMBOL:", symbol)
 
-# FETCH THE DATA
+# REPORT
 
 from pandas import read_csv
 
@@ -22,8 +17,7 @@ df = read_csv(request_url)
 
 print(df.columns)
 print(len(df))
-print(df.head())
-
+df.head()
 
 # Challenge A
 #
@@ -54,7 +48,6 @@ print(f"MAX PRICE: ${recent_df['adjusted_close'].max()}")
 # quantiles, for fun :-)
 print(f"75TH PERCENTILE: ${recent_df['adjusted_close'].quantile(.75).round(2)}")
 print(f"25TH PERCENTILE: ${recent_df['adjusted_close'].quantile(.25).round(2)}")
-
 
 # Challenge C
 #
