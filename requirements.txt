@@ -7,3 +7,5 @@ python-dotenv
 pandas
 
 pytest
+
+flask
