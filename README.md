@@ -5,13 +5,13 @@
 Create virtual environment:
 
 ```sh
-conda create -n ump-env python=3.11
+conda create -n reports-env-2024 python=3.11
 ```
 
 Activate the environment:
 
 ```sh
-conda activate ump-env
+conda activate reports-env-2024
 ```
 
 Install packages:
